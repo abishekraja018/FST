@@ -1,19 +1,24 @@
 import { useEffect, useState } from 'react';
 import axios from '../api';
-import jwtDecode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 
 const StudentDashboard = () => {
   const [showWelcome, setShowWelcome] = useState(true);
   const [certs, setCerts] = useState([]);
   const [studentEmail, setStudentEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchMyCertificates = async (email) => {
+    setLoading(true);
     try {
-      const res = await axios.get('/certificates'); // get all
+      const res = await axios.get('/certificates'); // get all certificates
       const myCerts = res.data.filter((cert) => cert.email === email);
       setCerts(myCerts);
     } catch (err) {
-      alert('Failed to fetch certificates');
+      setError('Failed to fetch certificates. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,7 +59,9 @@ const StudentDashboard = () => {
   return (
     <div className="page" style={{ padding: '2rem' }}>
       <h2>🎓 My Certificates</h2>
-      {certs.length === 0 ? (
+      {loading && <p>Loading certificates...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {certs.length === 0 && !loading ? (
         <p>No certificates found for {studentEmail}</p>
       ) : (
         <ul>
