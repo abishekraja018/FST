@@ -1,6 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
+import Login from './pages/Login';
+import AdminDashboard from './pages/AdminDashboard';
+import StudentDashboard from './pages/StudentDashboard';
 import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute'; // 👈
 
 function App() {
   return (
@@ -8,11 +12,25 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        {/* ❌ Temporarily remove other pages */}
-        {/* <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/verify" element={<VerifyCertificate />} />
-        <Route path="/admin" element={<AdminDashboard />} /> */}
+        <Route path="/login" element={<Login />} />
+
+        {/* 🔐 Protected routes */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student"
+          element={
+            <ProtectedRoute>
+              <StudentDashboard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
